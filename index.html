@@ -7,6 +7,8 @@
   <title>Marrant Club – Tour de France</title>
   <meta name="description"
     content="Suivez le Marrant Club dans leur épopée à travers les 95 départements français. Un département, un défi secret. Live permanent." />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; frame-src https://www.youtube.com; img-src 'self' data: https:;">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -76,6 +78,43 @@
       </div>
     </div>
     <div class="hero__scroll-hint">↓ Descends pour explorer la carte</div>
+  </section>
+  <!-- ===== PARTENAIRES ===== -->
+  <section class="partenaires-section" id="partenaires">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">PARTENAIRES</h2>
+        <p class="section-sub">Ceux qui rendent l'aventure possible</p>
+      </div>
+      <div class="partenaires-grid">
+        <!-- HappyVore -->
+        <div class="partenaire-card partenaire-happyvore">
+          <div class="partenaire-logo"><img src="happyvore.jpg" alt="HappyVore"
+              style="height: 120px; object-fit: contain; border-radius: 12px;"></div>
+          <p class="partenaire-tagline">L'énergie végétale du tour</p>
+          <div class="promo-block">
+            <span class="promo-label">Code promo exclusif</span>
+            <button class="promo-code" id="promo-btn">
+              <span class="copy-icon" id="promo-text">MARRANTCLUBMEMETBIEN </span>
+            </button>
+            <span class="promo-discount">-10% sur tout le site</span>
+          </div>
+          <a href="https://www.happyvore.com" target="_blank" rel="noopener" class="btn btn--green">Découvrir HappyVore
+            →</a>
+        </div>
+
+        <!-- TGV INOUI -->
+        <div class="partenaire-card partenaire-tgv">
+          <div class="partenaire-logo"><img src="tgvionoui.svg.png" alt="TGV INOUI"
+              style="height: 140px; object-fit: contain;"></div>
+          <p class="partenaire-tagline">Logistique &amp; Mobilité du tour</p>
+          <p class="partenaire-desc">TGV INOUI transporte l'équipe du Marrant Club d'un département à l'autre à la
+            vitesse de l'éclair.</p>
+          <a href="https://www.sncf-connect.com" target="_blank" rel="noopener" class="btn btn--outline">Réserver un
+            trajet →</a>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- ===== MAP SECTION ===== -->
@@ -379,46 +418,6 @@
     </div>
   </section>
 
-  <!-- ===== PARTENAIRES ===== -->
-  <section class="partenaires-section" id="partenaires">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">PARTENAIRES</h2>
-        <p class="section-sub">Ceux qui rendent l'aventure possible</p>
-      </div>
-      <div class="partenaires-grid">
-        <!-- HappyVore -->
-        <div class="partenaire-card partenaire-happyvore">
-          <div class="partenaire-logo"><i class="fa-solid fa-leaf"></i> HappyVore</div>
-          <p class="partenaire-tagline">L'énergie végétale du tour</p>
-          <div class="promo-block">
-            <span class="promo-label">Code promo exclusif</span>
-            <button class="promo-code" id="promo-btn" onclick="copyPromo()">
-              <span class="copy-icon" id="promo-text">MARRANTCLUBMEMETBIEN </span>
-            </button>
-            <span class="promo-discount">-10% sur tout le site</span>
-          </div>
-          <a href="https://www.happyvore.com" target="_blank" rel="noopener" class="btn btn--green">Découvrir HappyVore
-            →</a>
-        </div>
-
-        <!-- TGV INOUI -->
-        <div class="partenaire-card partenaire-tgv">
-          <div class="partenaire-logo"><i class="fa-solid fa-train"></i> TGV INOUI</div>
-          <p class="partenaire-tagline">Logistique &amp; Mobilité du tour</p>
-          <div class="tgv-train-track">
-            <div class="tgv-track-line"></div>
-            <div class="tgv-train" id="tgv-train"><i class="fa-solid fa-train-subway"></i></div>
-          </div>
-          <p class="partenaire-desc">TGV INOUI transporte l'équipe du Marrant Club d'un département à l'autre à la
-            vitesse de l'éclair.</p>
-          <a href="https://www.sncf-connect.com" target="_blank" rel="noopener" class="btn btn--outline">Réserver un
-            trajet →</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ===== SHOP ===== -->
   <section class="shop-section" id="shop">
     <div class="container">
@@ -488,16 +487,17 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© 2025 Marrant Club. Tous droits réservés.</p>
+        <p>© 2026 MarrantClub. Tous droits réservés. Réalisé par <a href="https://lecorpsbeau.com">lecorpsbeau.com</a>
+        </p>
         <p>Partenaires : <strong>HappyVore</strong> &amp; <strong>TGV INOUI</strong></p>
       </div>
     </div>
   </footer>
 
   <!-- ===== MODAL ===== -->
-  <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
-    <div class="modal" id="modal" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="closeModal()">✕</button>
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal">
+      <button class="modal-close" id="modal-close-btn">✕</button>
       <div id="modal-content"></div>
     </div>
   </div>
