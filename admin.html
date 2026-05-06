@@ -236,6 +236,8 @@
 
         <button id="export-btn" onclick="exportData()"><i class="fa-solid fa-download"></i> Sauvegarder (Télécharger
             data.js)</button>
+        
+        <div style="margin-top: 50px; font-size: 0.7rem; color: #444; text-align: right;">Admin v2.1</div>
     </div>
 
     <script>
@@ -379,13 +381,13 @@
                     const errData = await res.json().catch(() => ({}));
                     if (res.status === 401) {
                         container.innerHTML = `<p style="color:#ef4444;">❌ Mot de passe incorrect.</p>
-                        <p style="font-size:0.8rem; color:var(--muted);">${errData.debug || ''}</p>`;
+                        <p style="font-size:0.8rem; color:var(--muted); border-top:1px solid #333; padding-top:5px;">DEBUG : ${errData.debug || 'Pas d\'info reçue'}</p>`;
                     }
-                    else if (res.status === 403) container.innerHTML = '<p style="color:#ef4444;">❌ Accès refusé : Ton IP n\'est pas autorisée dans les réglages Vercel.</p>';
-                    else container.innerHTML = `<p style="color:#ef4444;">❌ Erreur ${res.status}: ${errData.error || 'Impossible de charger les défis.'}</p>`;
+                    else if (res.status === 403) container.innerHTML = '<p style="color:#ef4444;">❌ Accès refusé : Ton IP n\'est pas autorisée.</p>';
+                    else container.innerHTML = `<p style="color:#ef4444;">❌ Erreur ${res.status}: ${errData.error || 'Erreur inconnue'}</p>`;
                 }
             } catch (err) {
-                container.innerHTML = '<p style="color:#ef4444;">⚠️ L\'API n\'est pas joignable. Si tu es en local, c\'est normal (ça ne marche que sur Vercel).</p>';
+                container.innerHTML = '<p style="color:#ef4444;">⚠️ Impossible de contacter le serveur (Vérifie ta connexion ou AdBlock).</p>';
             }
         };
 
