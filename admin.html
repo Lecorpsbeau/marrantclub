@@ -371,10 +371,13 @@
                         </div>`;
                     });
                 } else {
-                    container.innerHTML = '<p style="color:#ef4444;">Erreur: Mot de passe incorrect ou API non disponible localement.</p>';
+                    const errData = await res.json().catch(() => ({}));
+                    if (res.status === 401) container.innerHTML = '<p style="color:#ef4444;">❌ Mot de passe incorrect.</p>';
+                    else if (res.status === 403) container.innerHTML = '<p style="color:#ef4444;">❌ Accès refusé : Ton IP n\'est pas autorisée dans les réglages Vercel.</p>';
+                    else container.innerHTML = `<p style="color:#ef4444;">❌ Erreur ${res.status}: ${errData.error || 'Impossible de charger les défis.'}</p>`;
                 }
             } catch (err) {
-                container.innerHTML = '<p style="color:#ef4444;">L\'API n\'est pas joignable (attendu si testé en local sans serveur).</p>';
+                container.innerHTML = '<p style="color:#ef4444;">⚠️ L\'API n\'est pas joignable. Si tu es en local, c\'est normal (ça ne marche que sur Vercel).</p>';
             }
         };
 
