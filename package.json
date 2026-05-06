@@ -2,11 +2,8 @@
   "name": "marrant-club-tdf",
   "version": "1.0.0",
   "description": "Site du Tour de France du Marrant Club",
-  "main": "index.html",
+  "type": "module",
   "dependencies": {
     "@vercel/kv": "^1.0.1"
-  },
-  "scripts": {
-    "start": "node server.js"
   }
 }
