@@ -14,16 +14,22 @@ export default async function handler(req, res) {
         return res.status(403).json({ error: "Accès interdit : IP non autorisée." });
     }
 
-    // 4. SÉCURITÉ MOT DE PASSE
-    const providedPass = (req.headers['authorization'] || '').trim();
+    // 4. SÉCURITÉ MOT DE PASSE (Utilisation d'un header personnalisé x-password)
+    const providedPass = (req.headers['x-password'] || '').trim();
     const actualPass = (ADMIN_PASSWORD || '').trim();
 
     if (!actualPass) {
-        return res.status(500).json({ error: "Le mot de passe admin n'est pas configuré sur Vercel." });
+        return res.status(500).json({ 
+            error: "Le mot de passe n'est pas configuré dans Vercel (ADMIN_PASSWORD est vide).",
+            debug_info: { user_ip: userIp }
+        });
     }
 
     if (providedPass !== actualPass) {
-        return res.status(401).json({ error: "Mot de passe incorrect." });
+        return res.status(401).json({ 
+            error: "Mot de passe incorrect.",
+            debug: `Recu: ${providedPass.length} car., Attendu: ${actualPass.length} car.` 
+        });
     }
 
     try {

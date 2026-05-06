@@ -363,7 +363,7 @@
             container.innerHTML = '<p>Chargement...</p>';
             try {
                 const res = await fetch('/api/api-view', {
-                    headers: { 'Authorization': pass }
+                    headers: { 'x-password': pass }
                 });
 
                 if (res.ok) {
