@@ -312,6 +312,7 @@
         }
 
         function login() {
+            console.log("Tentative de connexion...");
             const pass = document.getElementById('admin-pass').value;
             if (!pass) {
                 alert("Veuillez saisir le mot de passe.");
@@ -321,11 +322,21 @@
             document.getElementById('auth-section').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
 
-            localDepts = JSON.parse(JSON.stringify(DEPARTMENTS));
-            localLive = JSON.parse(JSON.stringify(LIVE_CONFIG));
+            console.log("Initialisation des données...");
+            // Copie locale avec sécurité si data.js est manquant
+            try {
+                localDepts = (typeof DEPARTMENTS !== 'undefined') ? JSON.parse(JSON.stringify(DEPARTMENTS)) : [];
+                localLive = (typeof LIVE_CONFIG !== 'undefined') ? JSON.parse(JSON.stringify(LIVE_CONFIG)) : {};
+            } catch (e) {
+                console.error("Erreur chargement data.js", e);
+                localDepts = [];
+                localLive = {};
+            }
 
             initLiveTab();
             renderDepts();
+            
+            console.log("Appel de l'API...");
             fetchDefis(pass);
         }
 
