@@ -178,7 +178,7 @@
 
     <div id="auth-section" class="login-box">
         <h2>🔒 Administration</h2>
-        <input type="password" id="admin-pass" placeholder="Mot de passe API (Optionnel pour tester)">
+        <input type="password" id="admin-pass" placeholder="Mot de passe Administrateur">
         <button onclick="login()">Accéder au panel</button>
     </div>
 
@@ -250,6 +250,12 @@
         }
 
         function login() {
+            const pass = document.getElementById('admin-pass').value;
+            if (!pass) {
+                alert("Veuillez saisir le mot de passe administrateur.");
+                return;
+            }
+
             document.getElementById('auth-section').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
             document.getElementById('export-btn').style.display = 'block';
@@ -261,8 +267,7 @@
             initLiveTab();
             renderDepts();
 
-            const pass = document.getElementById('admin-pass').value;
-            if (pass) fetchDefis(pass);
+            fetchDefis(pass);
         }
 
         function switchTab(tabId) {
