@@ -15,14 +15,14 @@ module.exports = async function handler(req, res) {
     if (!actualPass) {
         return res.status(500).json({ 
             error: "Password non configuré sur Vercel.",
-            debug: "v3.1 - Pas de mot de passe trouvé"
+            debug: "v4.0 - Serveur mis à jour"
         });
     }
 
     if (providedPass !== actualPass) {
         return res.status(401).json({ 
             error: "Mot de passe incorrect.",
-            debug: `v3.1 - Recu: ${providedPass.length} car., Attendu: ${actualPass.length} car.` 
+            debug: `v4.0 - Recu: ${providedPass.length} car., Attendu: ${actualPass.length} car.` 
         });
     }
 
