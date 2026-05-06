@@ -53,7 +53,15 @@ function openDeptModal(dept) {
       html += `<p>${dept.challengeSummary}</p>`;
     }
     if (dept.youtubeId) {
-      html += `<div class="video-wrapper" style="margin-top: var(--spacing-md); position: relative; padding-bottom: 56.25%; height: 0;"><iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/${dept.youtubeId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+      let embedId = dept.youtubeId;
+      // In case the user pasted the full URL by mistake in data.js, extract the ID
+      if (embedId.includes('v=')) {
+        embedId = embedId.split('v=')[1].split('&')[0];
+      } else if (embedId.includes('youtu.be/')) {
+        embedId = embedId.split('youtu.be/')[1].split('?')[0];
+      }
+      
+      html += `<a href="https://www.youtube.com/watch?v=${embedId}" target="_blank" class="btn btn--outline" style="margin-top: var(--spacing-md); display: block; text-align: center;"><i class="fa-brands fa-youtube" style="margin-right: 8px;"></i> Voir la vidéo</a>`;
     }
     if (dept.teamPhoto) {
       html += `<img src="${dept.teamPhoto}" alt="Team at ${dept.name}" class="team-photo" style="margin-top: var(--spacing-md); border-radius: 8px;" />`;
@@ -67,10 +75,39 @@ function openDeptModal(dept) {
 
 function closeModal() {
   const overlay = document.getElementById("modal-overlay");
-  if (overlay) overlay.classList.remove("active");
+  if (overlay) {
+    overlay.classList.remove("active");
+  }
+  
+  // Vider le contenu pour couper la vidéo (avec un léger délai pour l'animation)
+  setTimeout(() => {
+    const content = document.getElementById("modal-content");
+    if (content) content.innerHTML = "";
+  }, 300);
 }
 
 // Expose closeModal globally for the overlay click
 window.closeModal = closeModal;
 
-document.addEventListener("DOMContentLoaded", initMap);
+function initModalListeners() {
+  const overlay = document.getElementById("modal-overlay");
+  const modal = document.getElementById("modal");
+  const closeBtn = document.getElementById("modal-close-btn");
+
+  if (overlay) {
+    overlay.addEventListener("click", () => closeModal());
+  }
+
+  if (modal) {
+    modal.addEventListener("click", (e) => e.stopPropagation());
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => closeModal());
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initMap();
+  initModalListeners();
+});
