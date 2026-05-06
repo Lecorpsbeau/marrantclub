@@ -1,14 +1,29 @@
-export default function handler(req, res) {
-    if (req.method === 'POST') {
-        const { departement, pseudo, message } = req.body;
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const app = express();
+const PORT = 3000;
 
-        // Ici, tu pourrais envoyer les données vers une base de données (comme Supabase ou MongoDB)
-        console.log(`Nouveau défi pour le ${departement} par ${pseudo}: ${message}`);
+app.use(cors());
+app.use(bodyParser.json());
 
-        return res.status(200).json({ status: 'success', message: 'Défi reçu !' });
-    } else {
-        // Si quelqu'un essaie d'accéder à l'URL sans envoyer de formulaire
-        res.setHeader('Allow', ['POST']);
-        res.status(405).end(`Method ${req.method} Not Allowed`);
-    }
-}
+// Stockage temporaire (en attendant une base de données)
+let defisRecus = [];
+
+app.post('/api/soumettre-defi', (req, res) => {
+    const nouveauDefi = {
+        departement: req.body.departement,
+        pseudo: req.body.pseudo,
+        message: req.body.message,
+        date: new Date()
+    };
+
+    defisRecus.push(nouveauDefi);
+    console.log("Nouveau défi reçu pour le Marrant Club !", nouveauDefi);
+
+    res.status(200).send({ message: "Défi bien enregistré sur le serveur !" });
+});
+
+app.listen(PORT, () => {
+    console.log(`Serveur prêt sur http://localhost:${PORT}`);
+});
