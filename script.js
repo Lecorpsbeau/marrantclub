@@ -106,6 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (promoBtn) {
         promoBtn.addEventListener("click", copyPromo);
     }
+
+    // Event listener for form submission
+    const submitForm = document.getElementById("submit-form");
+    if (submitForm) {
+        submitForm.addEventListener("submit", handleSubmit);
+    }
 });
 
 async function handleSubmit(event) {

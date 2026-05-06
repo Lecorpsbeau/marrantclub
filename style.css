@@ -790,13 +790,13 @@ section:nth-child(even) {
 }
 
 .defi-card__status.done {
-  background: rgba(250, 204, 21, 0.1);
-  color: var(--color-primary-yellow);
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--color-primary-green);
 }
 
 .defi-card__status.current {
-  background: rgba(34, 197, 94, 0.1);
-  color: var(--color-primary-green);
+  background: rgba(250, 204, 21, 0.1);
+  color: var(--color-primary-yellow);
 }
 
 .defi-card__status.locked {
@@ -1118,6 +1118,7 @@ section:nth-child(even) {
   display: flex;
   gap: var(--spacing-md);
   font-size: 1.5rem;
+  justify-content: center;
 }
 
 .footer-bottom {
@@ -1176,6 +1177,7 @@ section:nth-child(even) {
   font-size: 1.5rem;
   cursor: pointer;
   transition: color var(--transition-fast);
+  z-index: 10;
 }
 
 .modal-close:hover {

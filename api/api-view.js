@@ -8,8 +8,8 @@ export default async function handler(req, res) {
     const MY_IP = process.env.ADMIN_IP; // Ton IP (ex: "82.123.45.67")
     const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD; // Ton mot de passe secret
 
-    // 3. SÉCURITÉ IP
-    if (!userIp.includes(MY_IP)) {
+    // 3. SÉCURITÉ IP (Optionnelle : s'active seulement si ADMIN_IP est configuré)
+    if (MY_IP && !userIp.includes(MY_IP)) {
         console.warn(`Tentative d'accès bloquée : IP ${userIp}`);
         return res.status(403).json({ error: "Accès interdit : IP non autorisée." });
     }
