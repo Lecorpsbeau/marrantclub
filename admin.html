@@ -232,6 +232,7 @@
             <p style="color:var(--muted); margin-bottom: 30px;">Accès sécurisé au Tour de France</p>
             <input type="password" id="admin-pass" placeholder="Mot de passe">
             <button onclick="login()" style="width: 100%; justify-content: center;">Entrer dans le panel</button>
+            <div id="test-status" style="margin-top: 15px; font-size: 0.8rem; color: var(--muted); cursor: pointer;" onclick="testServer()">Vérifier si le serveur est en ligne...</div>
         </div>
     </div>
 
@@ -309,6 +310,20 @@
             t.textContent = msg;
             t.style.display = 'block';
             setTimeout(() => t.style.display = 'none', 3000);
+        }
+
+        async function testServer() {
+            const status = document.getElementById('test-status');
+            status.textContent = "Vérification en cours...";
+            try {
+                const res = await fetch('/api/test');
+                const data = await res.json();
+                status.textContent = "✅ " + data.message + " (" + data.time + ")";
+                status.style.color = "var(--green)";
+            } catch (e) {
+                status.textContent = "❌ Le serveur ne répond pas (Erreur 404).";
+                status.style.color = "var(--red)";
+            }
         }
 
         function login() {
