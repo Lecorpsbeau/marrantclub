@@ -34,12 +34,15 @@ export default async function handler(req, res) {
 
     try {
         // 5. RÉCUPÉRATION DES DÉFIS DANS UPSTASH/KV
-        // On récupère tout de la liste 'defis_recus' du plus récent au plus ancien
         const defis = await kv.lrange('defis_recus', 0, -1);
 
-        return res.status(200).json(defis);
+        // On renvoie un objet propre avec un timestamp pour vérifier la fraîcheur du code
+        return res.status(200).json({
+            timestamp: new Date().toLocaleTimeString('fr-FR'),
+            defis: defis
+        });
     } catch (error) {
         console.error("Erreur Upstash:", error);
-        return res.status(500).json({ error: "Erreur lors de la lecture de la base de données." });
+        return res.status(500).json({ error: "Erreur base de données." });
     }
 }
