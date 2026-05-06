@@ -38,6 +38,74 @@ document.addEventListener('DOMContentLoaded', () => {
 
         selectDept.appendChild(opt);
     }
+
+    // Populate Defis Grid
+    const defisGrid = document.getElementById("defis-grid");
+    if (defisGrid && typeof DEPARTMENTS !== "undefined") {
+        const doneDepts = DEPARTMENTS.filter(d => d.state === "done");
+        
+        doneDepts.forEach(dept => {
+            const card = document.createElement("div");
+            card.className = "defi-card";
+            
+            // Extract embed ID if needed to build a youtube link
+            let embedId = dept.youtubeId;
+            if (embedId && embedId.includes('v=')) {
+              embedId = embedId.split('v=')[1].split('&')[0];
+            } else if (embedId && embedId.includes('youtu.be/')) {
+              embedId = embedId.split('youtu.be/')[1].split('?')[0];
+            }
+            
+            const ytLink = embedId ? `<a href="https://www.youtube.com/watch?v=${embedId}" target="_blank" class="btn btn--outline" style="margin-top: 10px;"><i class="fa-brands fa-youtube" style="margin-right: 8px;"></i> Voir la vidéo</a>` : '';
+
+            card.innerHTML = `
+                <div class="defi-card__header">
+                    <span class="defi-card__dept">${dept.id} - ${dept.name}</span>
+                    <span class="defi-card__status done">Validé</span>
+                </div>
+                <div class="defi-card__title">${dept.challengeTitle || "Défi mystère"}</div>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 15px; flex-grow: 1;">${dept.challengeSummary || ""}</p>
+                ${ytLink}
+            `;
+            defisGrid.appendChild(card);
+        });
+
+        // Add "En cours" dept
+        const currentDept = DEPARTMENTS.find(d => d.state === "current");
+        if (currentDept) {
+            const card = document.createElement("div");
+            card.className = "defi-card";
+            card.innerHTML = `
+                <div class="defi-card__header">
+                    <span class="defi-card__dept">${currentDept.id} - ${currentDept.name}</span>
+                    <span class="defi-card__status current">En cours</span>
+                </div>
+                <div class="defi-card__title">Défi à venir</div>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 15px; flex-grow: 1;">Le Marrant Club est actuellement dans ce département !</p>
+                <a href="https://www.twitch.tv/marrantclub" target="_blank" class="btn btn--yellow" style="margin-top: 10px;"><i class="fa-brands fa-twitch" style="margin-right: 8px;"></i> Rejoindre le live</a>
+            `;
+            defisGrid.appendChild(card);
+        }
+        
+        // Update Progress Bar
+        const progressCount = document.getElementById("progress-count");
+        const progressFill = document.getElementById("progress-fill");
+        if (progressCount && progressFill) {
+            const total = DEPARTMENTS.length;
+            const done = DEPARTMENTS.filter(d => d.state === "done").length;
+            const percent = (done / total) * 100;
+            
+            progressCount.innerText = `${done.toString().padStart(2, '0')} / ${total} Départements validés`;
+            progressFill.style.width = `${percent}%`;
+        }
+
+    }
+
+    // Event listener for promo copy
+    const promoBtn = document.getElementById("promo-btn");
+    if (promoBtn) {
+        promoBtn.addEventListener("click", copyPromo);
+    }
 });
 
 async function handleSubmit(event) {
@@ -61,3 +129,18 @@ async function handleSubmit(event) {
         console.error("Erreur lors de l'envoi :", error);
     }
 }
+
+function copyPromo() {
+    const code = "MARRANTCLUBMEMETBIEN";
+    navigator.clipboard.writeText(code).then(() => {
+        const btn = document.getElementById("promo-btn");
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = `<i class="fa-solid fa-check" style="color: var(--color-primary-green);"></i> Copié !`;
+        setTimeout(() => {
+            btn.innerHTML = originalHTML;
+        }, 2000);
+    }).catch(err => {
+        console.error('Erreur lors de la copie: ', err);
+    });
+}
+window.copyPromo = copyPromo;
