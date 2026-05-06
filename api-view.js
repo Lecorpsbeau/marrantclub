@@ -30,7 +30,7 @@ module.exports = async function handler(req, res) {
         const defis = await kv.lrange('defis_recus', 0, -1);
         return res.status(200).json({
             timestamp: new Date().toLocaleTimeString('fr-FR'),
-            debug: "v3.1 - OK",
+            debug: "v4.0 - OK",
             defis: defis
         });
     } catch (error) {
