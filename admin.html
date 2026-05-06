@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Marrant Club</title>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #121214;
+            --bg-card: #1f1f22;
+            --primary: #facc15;
+            --green: #22c55e;
+            --text: #f3f4f6;
+            --muted: #9ca3af;
+        }
+
+        body {
+            font-family: 'Barlow', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* LOGIN */
+        .login-box {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 400px;
+            margin: 100px auto;
+            text-align: center;
+            border: 1px solid #333;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 20px;
+            background: #2a2a2e;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 6px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: var(--primary);
+            color: var(--bg-dark);
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--muted);
+            font-weight: bold;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-locked {
+            background: #333;
+            color: #fff;
+        }
+
+        .status-current {
+            background: rgba(250, 204, 21, 0.2);
+            color: var(--primary);
+        }
+
+        .status-done {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--green);
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--muted);
+        }
+
+        #export-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            display: none;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--green);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="toast" class="toast">Action réussie !</div>
+
+    <!-- SCRIPT DATA POUR CHARGER LES DEPARTEMENTS -->
+    <script src="data.js"></script>
+
+    <div id="auth-section" class="login-box">
+        <h2>🔒 Administration</h2>
+        <input type="password" id="admin-pass" placeholder="Mot de passe API (Optionnel pour tester)">
+        <button onclick="login()">Accéder au panel</button>
+    </div>
+
+    <div id="admin-panel" class="container" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 30px;">
+            <h1>Marrant Club - Panneau de Contrôle</h1>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('tab-carte')">🗺️ Gestion Carte & Défis</button>
+            <button class="tab" onclick="switchTab('tab-live')">🔴 Paramètres Live</button>
+            <button class="tab" onclick="switchTab('tab-reception')">📥 Boîte de réception (Défis soumis)</button>
+        </div>
+
+        <!-- ONGLET GESTION CARTE -->
+        <div id="tab-carte" class="tab-content active">
+            <div style="margin-bottom: 20px;">
+                <input type="text" id="search-dept" placeholder="Rechercher un département (ex: Ain, 01...)"
+                    onkeyup="renderDepts()" style="max-width: 400px;">
+            </div>
+            <div class="grid" id="depts-grid"></div>
+        </div>
+
+        <!-- ONGLET LIVE -->
+        <div id="tab-live" class="tab-content">
+            <div class="card" style="max-width: 600px;">
+                <h2>Bandeau Live</h2>
+                <div class="form-group">
+                    <label>En live actuellement ?</label>
+                    <select id="live-isLive">
+                        <option value="true">Oui (Affiche le bandeau rouge)</option>
+                        <option value="false">Non (Cache le bandeau)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Département Actuel (ID)</label>
+                    <input type="text" id="live-currentDept" placeholder="Ex: 02">
+                </div>
+                <div class="form-group">
+                    <label>Lien Twitch (ou autre)</label>
+                    <input type="text" id="live-watchUrl" placeholder="https://twitch.tv/...">
+                </div>
+                <button onclick="saveLiveConfig()"><i class="fa-solid fa-save"></i> Mettre à jour le Live</button>
+            </div>
+        </div>
+
+        <!-- ONGLET BOITE DE RECEPTION -->
+        <div id="tab-reception" class="tab-content">
+            <div id="list-defis">
+                <p>Récupération des défis...</p>
+            </div>
+            <button onclick="fetchDefis(document.getElementById('admin-pass').value)" style="margin-top:20px;"><i
+                    class="fa-solid fa-sync"></i> Rafraîchir</button>
+        </div>
+
+        <button id="export-btn" onclick="exportData()"><i class="fa-solid fa-download"></i> Sauvegarder (Télécharger
+            data.js)</button>
+    </div>
+
+    <script>
+        let localDepts = [];
+        let localLive = {};
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+
+        function login() {
+            document.getElementById('auth-section').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'block';
+            document.getElementById('export-btn').style.display = 'block';
+
+            // Copie locale des données du script data.js
+            localDepts = JSON.parse(JSON.stringify(DEPARTMENTS));
+            localLive = JSON.parse(JSON.stringify(LIVE_CONFIG));
+
+            initLiveTab();
+            renderDepts();
+
+            const pass = document.getElementById('admin-pass').value;
+            if (pass) fetchDefis(pass);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            // Trouver le bouton cliqué
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(t => {
+                if (t.getAttribute('onclick').includes(tabId)) t.classList.add('active');
+            });
+        }
+
+        /* ==== GESTION DE LA CARTE ==== */
+        function renderDepts() {
+            const grid = document.getElementById('depts-grid');
+            grid.innerHTML = '';
+            const search = document.getElementById('search-dept').value.toLowerCase();
+
+            localDepts.forEach((dept, index) => {
+                if (search && !dept.name.toLowerCase().includes(search) && !dept.id.includes(search)) return;
+
+                let statusClass = dept.state === 'done' ? 'status-done' : (dept.state === 'current' ? 'status-current' : 'status-locked');
+                let statusLabel = dept.state === 'done' ? 'Validé' : (dept.state === 'current' ? 'En cours' : 'Secret');
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                        <h3 style="margin:0;">${dept.id} - ${dept.name}</h3>
+                        <span class="status-badge ${statusClass}">${statusLabel}</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Avancement (État)</label>
+                        <select onchange="updateDept(${index}, 'state', this.value)">
+                            <option value="locked" ${dept.state === 'locked' ? 'selected' : ''}>Secret (Noir)</option>
+                            <option value="current" ${dept.state === 'current' ? 'selected' : ''}>En cours (Jaune)</option>
+                            <option value="done" ${dept.state === 'done' ? 'selected' : ''}>Validé (Vert)</option>
+                        </select>
+                    </div>
+
+                    <div id="details-${index}" style="display: ${dept.state === 'locked' ? 'none' : 'block'}; border-top: 1px solid #333; padding-top: 15px; margin-top: 15px;">
+                        <div class="form-group">
+                            <label>Titre du défi</label>
+                            <input type="text" value="${dept.challengeTitle || ''}" onchange="updateDept(${index}, 'challengeTitle', this.value)" placeholder="Ex: Le Vase de Soissons">
+                        </div>
+                        <div class="form-group">
+                            <label>Résumé de ce qu'il s'est passé</label>
+                            <textarea rows="3" onchange="updateDept(${index}, 'challengeSummary', this.value)">${dept.challengeSummary || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Lien Vidéo YouTube (ID ou URL entière)</label>
+                            <input type="text" value="${dept.youtubeId || ''}" onchange="updateDept(${index}, 'youtubeId', this.value)" placeholder="Ex: VqZZE8RR_EE">
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        window.updateDept = function (index, field, value) {
+            if (value === "") value = null;
+            localDepts[index][field] = value;
+            if (field === 'state') {
+                renderDepts(); // refresh UI to show/hide fields
+            }
+        };
+
+        /* ==== GESTION LIVE ==== */
+        function initLiveTab() {
+            document.getElementById('live-isLive').value = localLive.isLive ? "true" : "false";
+            document.getElementById('live-currentDept').value = localLive.currentDept || "";
+            document.getElementById('live-watchUrl').value = localLive.watchUrl || "";
+        }
+
+        window.saveLiveConfig = function () {
+            localLive.isLive = document.getElementById('live-isLive').value === "true";
+            localLive.currentDept = document.getElementById('live-currentDept').value;
+            localLive.watchUrl = document.getElementById('live-watchUrl').value;
+
+            // Trouver le nom du dept
+            const d = localDepts.find(x => x.id === localLive.currentDept);
+            if (d) localLive.currentDeptName = d.name;
+
+            showToast("Configuration Live mise à jour en mémoire !");
+        };
+
+        /* ==== API LECTURE DEFIS ==== */
+        window.fetchDefis = async function (pass) {
+            const container = document.getElementById('list-defis');
+            container.innerHTML = '<p>Chargement...</p>';
+            try {
+                const res = await fetch('/api/api-view', {
+                    headers: { 'Authorization': pass }
+                });
+
+                if (res.ok) {
+                    const defis = await res.json();
+                    container.innerHTML = '';
+                    if (defis.length === 0) container.innerHTML = '<p>Aucun défi reçu pour le moment.</p>';
+                    defis.forEach(d => {
+                        container.innerHTML += `<div class="card" style="border-left: 5px solid var(--primary);">
+                            <strong>Dept ${d.departement}</strong> - proposé par <span style="color:var(--primary)">${d.pseudo}</span><br><br>${d.message}
+                        </div>`;
+                    });
+                } else {
+                    container.innerHTML = '<p style="color:#ef4444;">Erreur: Mot de passe incorrect ou API non disponible localement.</p>';
+                }
+            } catch (err) {
+                container.innerHTML = '<p style="color:#ef4444;">L\'API n\'est pas joignable (attendu si testé en local sans serveur).</p>';
+            }
+        };
+
+        /* ==== EXPORT ==== */
+        window.exportData = function () {
+            let fileContent = `// ============================================================
+// DATA.JS – Marrant Club Tour de France
+// Fichier généré automatiquement depuis l'interface d'administration
+// ============================================================
+
+// States: "done" | "current" | "locked"
+const DEPARTMENTS = ${JSON.stringify(localDepts, null, 2)};
+
+// Live config
+const LIVE_CONFIG = ${JSON.stringify(localLive, null, 2)};
+`;
+
+            // Créer un blob et le télécharger
+            const blob = new Blob([fileContent], { type: 'text/javascript' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'data.js';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            alert("✅ Le nouveau fichier data.js a été téléchargé.\n\nRemplace l'ancien fichier 'data.js' dans ton dossier Vercel/Github par celui-ci, puis redéploie le site !");
+        };
+    </script>
+</body>
+
+</html>
