@@ -8,8 +8,8 @@ const DEPARTMENTS = [
     "id": "01",
     "name": "Ain",
     "state": "done",
-    "challengeTitle": "Le Vase de Soissons",
-    "challengeSummary": "Jouer la légende médiévale devant le plus de monde possible sous la pluie.",
+    "challengeTitle": "Traversée du lac de Nantua",
+    "challengeSummary": "Traverser le lac de Nantua à la nage pendant qu'un papy de Bresse nous encourage ",
     "youtubeId": "VqZZE8RR_EE",
     "teamPhoto": null,
     "color": "#FFD700"
@@ -17,17 +17,19 @@ const DEPARTMENTS = [
   {
     "id": "02",
     "name": "Aisne",
-    "state": "current",
-    "challengeTitle": null,
-    "challengeSummary": null,
-    "youtubeId": null,
+    "state": "done",
+    "challengeTitle": "La legende du vase de Soisson",
+    "challengeSummary": "Adapter la légende du vase de Soissons et la jouer devant le + de Soissonnais sous la pluie",
+    "youtubeId": "iDuizaYQGxY",
     "teamPhoto": null,
     "color": null
   },
   {
     "id": "03",
     "name": "Allier",
-    "state": "locked"
+    "state": "current",
+    "challengeSummary": "Trouver une chaise dans le 03 et la cacher dans le village de « Deux-Chaises » pour qu'il devienne « Trois-Chaises »",
+    "challengeTitle": "Le Village des 3 chaises "
   },
   {
     "id": "04",
@@ -498,8 +500,8 @@ const DEPARTMENTS = [
 
 const LIVE_CONFIG = {
   "isLive": false,
-  "currentDept": "03",
-  "currentDeptName": "Allier",
+  "currentDept": "04",
+  "currentDeptName": "Alpes-de-Haute-Provence",
   "watchUrl": "https://www.twitch.tv/marrantclub",
   "nextDept": "03",
   "nextDeptName": "Allier"
