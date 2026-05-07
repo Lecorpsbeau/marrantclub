@@ -10,10 +10,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static('.')); // Sert les fichiers statiques (index.html, admin.html, etc.)
-
-// Stockage temporaire (en attendant Upstash en prod)
-let defisRecus = [];
+app.use(express.static('.')); 
 
 const getAdminPassword = () => {
     let pass = process.env.ADMIN_PASSWORD || process.env.ADMIN_PASS || process.env.PASSWORD || "marrant";
@@ -30,10 +27,18 @@ app.all('/api/login', (req, res) => {
     const providedPass = (req.headers['x-password'] || '').trim();
     const actualPass = getAdminPassword();
 
+    console.log(`[LOGIN] Tentative avec : "${providedPass}" (longueur: ${providedPass.length})`);
+    console.log(`[LOGIN] Attendu : "${actualPass}" (longueur: ${actualPass.length})`);
+
     if (providedPass === actualPass) {
+        console.log("✅ Accès autorisé");
         res.json({ success: true });
     } else {
-        res.status(401).json({ error: "Mot de passe incorrect." });
+        console.log("❌ Accès refusé");
+        res.status(401).json({ 
+            error: "Mot de passe incorrect.",
+            debug: `Recu: ${providedPass.length} car., Attendu: ${actualPass.length} car.`
+        });
     }
 });
 
@@ -72,4 +77,5 @@ app.listen(PORT, () => {
     console.log(`👉 http://localhost:${PORT}`);
     console.log(`👉 Admin: http://localhost:${PORT}/admin.html`);
     console.log(`=========================================`);
+    console.log(`Le mot de passe actuel est : ${getAdminPassword()}`);
 });
