@@ -3,7 +3,7 @@
 ![Marrant Club Icon](icon.png)
 
 Bienvenue sur le dépôt officiel du **Marrant Club** ! 
-Notre mission : Parcourir les **96 départements français** et relever un défi loufoque dans chacun d'entre eux. 
+Notre mission : Parcourir les **95 départements français** et relever un défi loufoque dans chacun d'entre eux. 
 
 🚀 **Site propulsé par [Vercel](https://vercel.com)**
 
@@ -32,4 +32,5 @@ Si vous voulez contribuer ou tester le projet sur votre machine :
 
 1. **Cloner le projet**
    ```bash
-   git clone [https://github.com/votre-compte/marrantclub.git](https://github.com/votre-compte/marrantclub.git)
+   git clone https://github.com/Lecorpsbeau/marrantclub.git
+   ```
