@@ -1,6 +1,6 @@
 
 module.exports = async function handler(req, res) {
-    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || process.env.ADMIN_PASS || process.env.PASSWORD || "marrant";
+    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || process.env.ADMIN_PASS || "marrant";
     const providedPass = (req.headers['x-password'] || '').trim();
     let actualPass = ADMIN_PASSWORD.replace(/^["']|["']$/g, '').trim();
 
