@@ -3,17 +3,18 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const { exec } = require('child_process');
 require('dotenv').config({ path: '.env.local' });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '10mb' }));
 app.use(express.static('.')); 
 
 const getAdminPassword = () => {
-    let pass = process.env.ADMIN_PASSWORD || process.env.ADMIN_PASS || process.env.PASSWORD || "marrant";
+    let pass = process.env.ADMIN_PASSWORD || process.env.ADMIN_PASS || "marrant";
     return pass.replace(/^["']|["']$/g, '').trim();
 };
 
@@ -27,18 +28,47 @@ app.all('/api/login', (req, res) => {
     const providedPass = (req.headers['x-password'] || '').trim();
     const actualPass = getAdminPassword();
 
-    console.log(`[LOGIN] Tentative avec : "${providedPass}" (longueur: ${providedPass.length})`);
-    console.log(`[LOGIN] Attendu : "${actualPass}" (longueur: ${actualPass.length})`);
-
     if (providedPass === actualPass) {
-        console.log("✅ Accès autorisé");
         res.json({ success: true });
     } else {
-        console.log("❌ Accès refusé");
         res.status(401).json({ 
             error: "Mot de passe incorrect.",
             debug: `Recu: ${providedPass.length} car., Attendu: ${actualPass.length} car.`
         });
+    }
+});
+
+// SAUVEGARDE ET PUSH
+app.post('/api/admin-save', (req, res) => {
+    const providedPass = (req.headers['x-password'] || '').trim();
+    const actualPass = getAdminPassword();
+
+    if (providedPass !== actualPass) {
+        return res.status(401).json({ error: "Interdit" });
+    }
+
+    const { departments, liveConfig } = req.body;
+    const fileContent = `// DONNÉES OFFICIELLES DU MARRANT CLUB\n` +
+        `const DEPARTMENTS = ${JSON.stringify(departments, null, 4)};\n\n` +
+        `const LIVE_CONFIG = ${JSON.stringify(liveConfig, null, 4)};\n`;
+
+    try {
+        fs.writeFileSync(path.join(__dirname, 'data.js'), fileContent);
+        
+        console.log("💾 data.js sauvegardé localement.");
+
+        // Lancer le push git en arrière-plan
+        exec('git add data.js && git commit -m "Admin update: data.js" && git push origin main', (err, stdout, stderr) => {
+            if (err) {
+                console.error("❌ Erreur Git Push:", stderr);
+            } else {
+                console.log("🚀 Git Push réussi !");
+            }
+        });
+
+        res.json({ success: true, message: "Enregistré et push lancé !" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
@@ -53,29 +83,13 @@ app.get('/api/api-view', (req, res) => {
 
     res.json({
         timestamp: new Date().toLocaleTimeString('fr-FR'),
-        defis: defisRecus
+        defis: [] // On pourrait charger depuis KV ici
     });
-});
-
-// Route pour soumettre un défi
-app.post('/api/soumettre', (req, res) => {
-    const nouveauDefi = {
-        departement: req.body.departement,
-        pseudo: req.body.pseudo,
-        message: req.body.message,
-        date: new Date()
-    };
-
-    defisRecus.push(nouveauDefi);
-    console.log("Nouveau défi reçu !", nouveauDefi);
-    res.status(200).send({ message: "Défi bien enregistré !" });
 });
 
 app.listen(PORT, () => {
     console.log(`=========================================`);
     console.log(`🚀 SERVEUR MARRANT CLUB DÉMARRÉ`);
     console.log(`👉 http://localhost:${PORT}`);
-    console.log(`👉 Admin: http://localhost:${PORT}/admin.html`);
     console.log(`=========================================`);
-    console.log(`Le mot de passe actuel est : ${getAdminPassword()}`);
 });

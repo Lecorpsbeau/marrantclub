@@ -264,6 +264,11 @@
             <button id="login-btn" onclick="login()" style="width: 100%; justify-content: center;">Entrer dans le
                 panel</button>
             <div id="login-error" style="color:var(--red); margin-top:10px; font-size:0.85rem; display:none;"></div>
+            
+            <button id="save-push-btn" onclick="saveAndPush()" style="display:none; position:fixed; bottom:30px; right:30px; width:auto; padding:15px 25px; background:var(--green); z-index:1000; box-shadow:0 10px 25px rgba(0,0,0,0.4);">
+                <i class="fa-solid fa-cloud-arrow-up"></i> ENREGISTRER & PUSH GITHUB
+            </button>
+
             <div id="test-status" style="margin-top: 15px; font-size: 0.8rem; color: var(--muted); cursor: pointer;"
                 onclick="testServer()">Vérifier si le serveur est en ligne...</div>
         </div>
@@ -381,10 +386,8 @@
                     headers: { 'x-password': pass }
                 });
 
-                if (res.ok) {
-                    document.getElementById('auth-section').style.display = 'none';
-                    document.getElementById('admin-panel').style.display = 'block';
-
+                    document.getElementById('save-push-btn').style.display = 'flex';
+                    
                     try {
                         localDepts = (typeof DEPARTMENTS !== 'undefined') ? JSON.parse(JSON.stringify(DEPARTMENTS)) : [];
                         localLive = (typeof LIVE_CONFIG !== 'undefined') ? JSON.parse(JSON.stringify(LIVE_CONFIG)) : {};
@@ -473,6 +476,41 @@
             document.getElementById('live-currentDept').value = localLive.currentDept || "";
             document.getElementById('live-watchUrl').value = localLive.watchUrl || "";
         }
+
+        window.saveAndPush = async function () {
+            const pass = document.getElementById('admin-pass').value;
+            const btn = document.getElementById('save-push-btn');
+            const originalText = btn.innerHTML;
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SAUVEGARDE EN COURS...';
+
+            try {
+                const res = await fetch('/api/admin-save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-password': pass
+                    },
+                    body: JSON.stringify({
+                        departments: localDepts,
+                        liveConfig: localLive
+                    })
+                });
+
+                if (res.ok) {
+                    showToast("✅ Données sauvegardées et Push lancé !");
+                } else {
+                    const data = await res.json();
+                    alert("Erreur : " + data.error);
+                }
+            } catch (err) {
+                alert("Erreur de connexion au serveur local.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        };
 
         window.saveLiveConfig = function () {
             localLive.isLive = document.getElementById('live-isLive').value === "true";
