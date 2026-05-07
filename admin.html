@@ -398,7 +398,7 @@
                     fetchDefis(pass);
                 } else {
                     const data = await res.json().catch(() => ({}));
-                    errorDiv.textContent = data.error || "Mot de passe incorrect.";
+                    errorDiv.innerHTML = `${data.error || "Mot de passe incorrect."}<br><small style="opacity:0.7">${data.debug || ""}</small>`;
                     errorDiv.style.display = 'block';
                     loginBtn.disabled = false;
                     loginBtn.textContent = originalBtnText;
