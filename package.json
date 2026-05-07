@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Site du Tour de France du Marrant Club",
   "dependencies": {
-    "@vercel/kv": "^1.0.1",
     "@vercel/analytics": "^1.2.2",
     "@vercel/speed-insights": "^1.0.10"
   }

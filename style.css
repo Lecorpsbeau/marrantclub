@@ -1252,3 +1252,89 @@ img.icon-club {
   border-radius: 50%;
   /* Pour transformer l'icône en cercle parfait */
 }
+/* ===== SOCIAL FEEDS ===== */
+.social-feeds {
+    background-color: var(--color-bg-dark);
+    padding: 80px 0;
+}
+
+.feeds-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.feed-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.feed-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--color-primary-yellow);
+}
+
+.feed-card h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.feed-card h3 i {
+    color: var(--color-primary-yellow);
+}
+
+.yt-container, .insta-container {
+    width: 100%;
+    margin-bottom: 20px;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.story-circle {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+}
+
+.story-ring {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    padding: 3px;
+    animation: rotate 3s linear infinite;
+}
+
+.story-circle img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 4px solid var(--color-bg-dark);
+    object-fit: cover;
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

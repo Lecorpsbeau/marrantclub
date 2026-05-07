@@ -112,7 +112,61 @@ document.addEventListener('DOMContentLoaded', () => {
     if (submitForm) {
         submitForm.addEventListener("submit", handleSubmit);
     }
+
+    // Update Socials
+    updateSocials();
 });
+
+async function updateSocials() {
+    try {
+        const response = await fetch('/api/socials');
+        if (!response.ok) return;
+        const data = await response.json();
+
+        // Update Twitch Banner
+        const liveBanner = document.getElementById('live-banner');
+        const liveStatusText = document.getElementById('live-status-text');
+        const watchBtn = document.getElementById('watch-live-btn');
+        const liveBadge = document.querySelector('.hero__badge');
+
+        if (data.twitch && data.twitch.live) {
+            if (liveBanner) liveBanner.style.display = 'flex';
+            if (liveBadge) liveBadge.style.display = 'flex';
+            if (liveStatusText) liveStatusText.innerHTML = `EN LIVE SUR <strong>TWITCH</strong>`;
+        }
+
+        // Update YouTube Link in footer and News section
+        const youtubeBtns = document.querySelectorAll('a[aria-label="YouTube"], .yt-feed a');
+        const ytLatestContainer = document.getElementById('yt-latest-container');
+
+        if (data.youtube && data.youtube.lastVideoUrl) {
+            youtubeBtns.forEach(btn => {
+                btn.href = data.youtube.lastVideoUrl;
+                if (btn.ariaLabel === "YouTube") btn.title = data.youtube.title || "Dernière vidéo";
+            });
+
+            if (ytLatestContainer) {
+                // Extract video ID for embed
+                let videoId = data.youtube.lastVideoUrl.split('v=')[1]?.split('&')[0];
+                if (videoId) {
+                    ytLatestContainer.innerHTML = `
+                        <div style="width: 100%; position: relative; padding-bottom: 56.25%; height: 0; margin-bottom: 15px;">
+                            <iframe src="https://www.youtube.com/embed/${videoId}" 
+                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 12px; border: none;" 
+                                allowfullscreen></iframe>
+                        </div>
+                        <p style="font-weight: 600; font-size: 0.9rem;">${data.youtube.title}</p>
+                    `;
+                } else {
+                    ytLatestContainer.innerHTML = `<p>Nouvelle vidéo disponible sur la chaine !</p>`;
+                }
+            }
+        }
+
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour des réseaux sociaux :", error);
+    }
+}
 
 async function handleSubmit(event) {
     event.preventDefault();
